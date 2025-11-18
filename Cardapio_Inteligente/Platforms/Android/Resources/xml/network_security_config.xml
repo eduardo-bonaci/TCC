@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+	<!-- ✅ Permite tráfego HTTP (sem HTTPS) apenas para a máquina local (API em localhost) -->
+	<domain-config cleartextTrafficPermitted="true">
+		<!-- 10.0.2.2 = localhost da máquina no emulador Android -->
+		<domain includeSubdomains="true">10.0.2.2</domain>
+		<!-- Também cobre loopback local, caso o app rode em outro host -->
+		<domain>localhost</domain>
+	</domain-config>
+</network-security-config>

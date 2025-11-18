@@ -1,0 +1,44 @@
+# ===== MAUI App =====
+bin/
+obj/
+.vs/
+*.db
+*.log
+
+# Platform-specific bin/obj
+**/Platforms/**/bin/
+**/Platforms/**/obj/
+
+# VS configuration
+*.user
+*.userosscache
+*.suo
+*.cache
+
+# Windows build outputs
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+
+# iOS / Mac
+*.ipa
+*.dSYM/
+*.xcarchive
+*.xcuserstate
+*.xcuserdata/
+*.xcworkspace/
+
+# Android
+*.apk
+*.aab
+
+# Other large files
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# ===== API project =====
+bin/
+obj/
