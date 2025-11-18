@@ -38,6 +38,8 @@ obj/
 *.exe
 *.pdb
 *.mdb
+Cardapio_Inteligente.Api/ModelosIA/
+
 
 # ===== API project =====
 bin/
