@@ -55,7 +55,7 @@ public partial class Tela_Cadastro : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Erro", $"Não foi possível carregar os ingredientes: {ex.Message}", "OK");
+            await DisplayAlert("Erro", $"Nï¿½o foi possï¿½vel carregar os ingredientes: {ex.Message}", "OK");
         }
     }
 
@@ -97,7 +97,7 @@ public partial class Tela_Cadastro : ContentPage
         }
         else
         {
-            lblPergunta.Text = "Cadastro concluído! Revise suas respostas abaixo e clique em Salvar.";
+            lblPergunta.Text = "Cadastro concluï¿½do! Revise suas respostas abaixo e clique em Salvar.";
             txtResposta.IsEnabled = false;
             btnEnviar.IsEnabled = false;
             btnSalvar.IsEnabled = true;
@@ -136,7 +136,8 @@ public partial class Tela_Cadastro : ContentPage
             Email = respostas.GetValueOrDefault("email") ?? "",
             Senha = respostas.GetValueOrDefault("senha") ?? "",
             Telefone = respostas.GetValueOrDefault("telefone") ?? "",
-            Preferencias = string.Join(", ",
+            // âœ… CORRIGIDO: Agora usa IngredientesNaoGosta ao invÃ©s de Preferencias
+            IngredientesNaoGosta = string.Join(", ",
                 checkPreferencias
                     .Where(c => c.IsChecked)
                     .Select(c => ((HorizontalStackLayout)c.Parent).Children[1] as Label)
@@ -150,7 +151,7 @@ public partial class Tela_Cadastro : ContentPage
         {
             MudarEstadoUI(true);
             await repositorio.SalvarUsuarioAsync(usuario);
-            await DisplayAlert("Sucesso", "Cadastro realizado! Você será redirecionado para o Login.", "OK");
+            await DisplayAlert("Sucesso", "Cadastro realizado! Vocï¿½ serï¿½ redirecionado para o Login.", "OK");
             await Navigation.PopAsync();
         }
         catch (Exception ex)

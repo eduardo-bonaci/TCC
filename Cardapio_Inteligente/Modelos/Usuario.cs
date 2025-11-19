@@ -12,7 +12,10 @@ namespace Cardapio_Inteligente.Modelos
         public string Senha { get; set; } = string.Empty;
 
         public string? Telefone { get; set; }
-        public string? Preferencias { get; set; }
+        
+        // ✅ CORRIGIDO: Agora usa o mesmo nome da API
+        public string? IngredientesNaoGosta { get; set; }
+        
         public string? Alergias { get; set; }
         public string? Token { get; set; }
         public DateTime DataCadastro { get; set; }

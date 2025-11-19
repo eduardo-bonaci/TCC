@@ -84,7 +84,8 @@ namespace Cardapio_Inteligente.Paginas
 
         private async void OnAssistenteClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new ChatPage());
+            // ✅ CORRIGIDO: Passa ApiService para ChatPage
+            await Navigation.PushAsync(new ChatPage(_apiService));
         }
     }
 
