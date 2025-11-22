@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+		<!-- Build targets: only Android and Windows (iOS/MacCatalyst removed intentionally) -->
+		<TargetFrameworks>net8.0-android;net8.0-windows10.0.19041.0</TargetFrameworks>
 		
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Cardapio_Inteligente</RootNamespace>
@@ -23,8 +23,6 @@
 
 		<WindowsPackageType>None</WindowsPackageType>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
@@ -55,23 +53,10 @@
 
 	<ItemGroup>
 		<!-- MAUI -->
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		
-		<!-- Database -->
-		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-		
-		<!-- LLamaSharp para IA local -->
-		<PackageReference Include="LLamaSharp" Version="0.25.0" />
-		<PackageReference Include="LLamaSharp.Backend.Cpu" Version="0.25.0" />
-		
-		<!-- ASP.NET Core para API embutida (Windows) -->
-		<PackageReference Include="Microsoft.AspNetCore.App" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+		<!-- BCrypt para senhas -->
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 	</ItemGroup>
 
@@ -88,21 +73,6 @@
 	  <MauiXaml Update="Paginas\Tela_Login.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<!-- Copiar modelo de IA para output (Windows) -->
-	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-		<None Include="..\Cardapio_Inteligente.Api\ModelosIA\*.gguf">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>ModelosIA\%(Filename)%(Extension)</Link>
-		</None>
-	</ItemGroup>
-
-	<!-- Copiar modelo de IA para Android Assets -->
-	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-		<AndroidAsset Include="..\Cardapio_Inteligente.Api\ModelosIA\*.gguf">
-			<Link>Assets\ModelosIA\%(Filename)%(Extension)</Link>
-		</AndroidAsset>
 	</ItemGroup>
 
 </Project>

@@ -12,8 +12,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="ModelosIA\Phi-3-mini-4k-instruct-q4.gguf">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  <!-- Só copia o modelo se o arquivo realmente existir (evita falha de build quando o modelo não está no repositório) -->
+	  <Content Include="ModelosIA\Phi-3-mini-4k-instruct-q4.gguf" Condition="Exists('ModelosIA\\Phi-3-mini-4k-instruct-q4.gguf')">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
 

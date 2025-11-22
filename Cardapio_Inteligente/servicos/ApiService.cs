@@ -12,11 +12,8 @@ namespace Cardapio_Inteligente.Servicos
         private readonly HttpClient _httpClient;
         private string? _token;
 
-        // ✅ URLs configuradas por plataforma
+        // ✅ URLs configuradas por plataforma (APENAS LOCAL)
         private readonly string[] _baseAddresses;
-
-        // ✅ CONFIGURAÇÃO: Altere esta URL para sua API hospedada (Azure, AWS, etc.)
-        private const string REMOTE_API_URL = "https://sua-api.azurewebsites.net"; // ⚠️ ALTERAR AQUI
 
         public ApiService()
         {
@@ -25,7 +22,7 @@ namespace Cardapio_Inteligente.Servicos
                 Timeout = TimeSpan.FromSeconds(60) // Aumentado para IA
             };
 
-            // ✅ Detecta plataforma e configura URLs apropriadas
+            // ✅ Detecta plataforma e configura URLs apropriadas (APENAS LOCAL)
             _baseAddresses = GetBaseAddressesForPlatform();
 
             // Carrega token salvo (se houver)
@@ -41,36 +38,35 @@ namespace Cardapio_Inteligente.Servicos
             }
         }
 
-        // ✅ Detecta plataforma e retorna URLs apropriadas
+        // ✅ Detecta plataforma e retorna URLs apropriadas (SOMENTE LOCALHOST)
         private string[] GetBaseAddressesForPlatform()
         {
 #if ANDROID
-            // Android: Tenta API remota primeiro, depois localhost do emulador
+            // Android: Conecta à API na máquina host através da rede local
+            // 10.0.2.2 é o IP especial do emulador Android para acessar localhost do host
+            // Para dispositivo físico, use o IP da sua máquina na rede (ex: 192.168.1.100)
             return new[] 
             { 
-                REMOTE_API_URL,                    // API hospedada na nuvem (PRIORIDADE)
                 "http://10.0.2.2:5068",            // Emulador Android (localhost da máquina host)
-                "http://192.168.1.100:5068"        // Dispositivo físico (AJUSTE ESTE IP para IP da sua máquina na rede)
+                "http://192.168.1.100:5068"        // ⚠️ AJUSTE ESTE IP para o IP da sua máquina na rede local
             };
 #elif WINDOWS
             // Windows: localhost direto (API iniciada automaticamente)
             return new[] 
             { 
                 "http://localhost:5068",
-                "https://localhost:7068",
-                REMOTE_API_URL                     // Fallback para API remota
+                "https://localhost:7068"
             };
 #elif IOS || MACCATALYST
             // iOS/Mac: localhost (API iniciada automaticamente no Mac)
             return new[] 
             { 
                 "http://localhost:5068",
-                "https://localhost:7068",
-                REMOTE_API_URL                     // Fallback para API remota
+                "https://localhost:7068"
             };
 #else
             // Fallback genérico
-            return new[] { "http://localhost:5068", REMOTE_API_URL };
+            return new[] { "http://localhost:5068" };
 #endif
         }
 
@@ -121,7 +117,7 @@ namespace Cardapio_Inteligente.Servicos
             foreach (var baseAddr in _baseAddresses)
             {
                 // Ignora URLs não configuradas
-                if (string.IsNullOrWhiteSpace(baseAddr) || baseAddr.Contains("sua-api"))
+                if (string.IsNullOrWhiteSpace(baseAddr))
                     continue;
 
                 try
@@ -147,13 +143,15 @@ namespace Cardapio_Inteligente.Servicos
             }
 
             // Se chegou aqui, nenhum endpoint funcionou
-            var errorMessage = $"❌ Não foi possível conectar à API em nenhum endpoint configurado.\n\n" +
-                             $"Endpoints testados:\n{string.Join("\n", _baseAddresses.Where(a => !string.IsNullOrWhiteSpace(a) && !a.Contains("sua-api")))}\n\n" +
+            var errorMessage = $"❌ Não foi possível conectar à API local em nenhum endpoint configurado.\n\n" +
+                             $"Endpoints testados:\n{string.Join("\n", _baseAddresses.Where(a => !string.IsNullOrWhiteSpace(a)))}\n\n" +
                              $"Último erro: {lastException?.Message}\n\n" +
                              $"Soluções:\n" +
                              $"1. Desktop: Certifique-se que a API foi iniciada automaticamente\n" +
-                             $"2. Mobile: Configure a URL da API remota no código (constante REMOTE_API_URL)\n" +
-                             $"3. Verifique sua conexão com a internet";
+                             $"2. Android no emulador: Use o IP 10.0.2.2:5068 para acessar localhost do host\n" +
+                             $"3. Android em dispositivo físico: Configure o IP correto da sua máquina na rede\n" +
+                             $"4. Verifique se o MySQL está rodando (banco: cardapio_db)\n" +
+                             $"5. Verifique o firewall do Windows";
             
             throw new Exception(errorMessage);
         }

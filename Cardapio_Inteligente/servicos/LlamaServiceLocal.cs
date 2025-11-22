@@ -1,6 +1,9 @@
 using LLama;
 using LLama.Common;
 using System.Text;
+using System.IO;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Cardapio_Inteligente.Servicos
 {
@@ -57,7 +60,6 @@ Foque em dar informações úteis sobre pratos, ingredientes e alternativas sem 
                 {
                     ContextSize = 2048,
                     GpuLayerCount = 0, // CPU only no Android
-                    Seed = 1337,
                     Threads = Environment.ProcessorCount > 4 ? 4 : Environment.ProcessorCount
                 };
 
@@ -143,7 +145,7 @@ Foque em dar informações úteis sobre pratos, ingredientes e alternativas sem 
                 var inferenceParams = new InferenceParams
                 {
                     MaxTokens = 256,
-                    Temperature = 0.7f,
+                    // Temperature removed to match LLamaSharp API version used
                     AntiPrompts = new List<string> { "Usuário:", "\n\n" }
                 };
 

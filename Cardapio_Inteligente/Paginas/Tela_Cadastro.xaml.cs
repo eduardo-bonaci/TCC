@@ -11,13 +11,14 @@ namespace Cardapio_Inteligente.Paginas;
 
 public partial class Tela_Cadastro : ContentPage
 {
-    private RepositorioUsuario repositorio = new RepositorioUsuario();
+    private readonly ApiService _apiService;
     private List<CheckBox> checkPreferencias = new();
     private List<string> ingredientes = new();
 
     public Tela_Cadastro()
     {
         InitializeComponent();
+        _apiService = new ApiService();
         _ = CarregarIngredientesAsync();
     }
 
@@ -25,7 +26,7 @@ public partial class Tela_Cadastro : ContentPage
     {
         try
         {
-            ingredientes = await repositorio.ApiService.GetIngredientesAsync();
+            ingredientes = await _apiService.GetIngredientesAsync();
 
             stackPreferencias.Children.Clear();
             checkPreferencias.Clear();
@@ -167,7 +168,7 @@ public partial class Tela_Cadastro : ContentPage
         try
         {
             MudarEstadoUI(true);
-            await repositorio.SalvarUsuarioAsync(usuario);
+            await _apiService.CadastrarUsuarioAsync(usuario);
             await DisplayAlert("Sucesso", "Cadastro realizado! Você será redirecionado para o Login.", "OK");
             await Navigation.PopAsync();
         }

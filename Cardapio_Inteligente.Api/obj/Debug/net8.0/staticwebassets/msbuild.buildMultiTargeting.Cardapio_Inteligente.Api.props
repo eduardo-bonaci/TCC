@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/Cardapio_Inteligente.Api.props" />
+</Project>

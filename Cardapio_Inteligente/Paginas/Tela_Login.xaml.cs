@@ -8,11 +8,12 @@ namespace Cardapio_Inteligente.Paginas;
 
 public partial class Tela_Login : ContentPage
 {
-    private readonly RepositorioUsuario repositorio = new RepositorioUsuario();
+    private readonly ApiService _apiService;
 
     public Tela_Login()
     {
         InitializeComponent();
+        _apiService = new ApiService();
     }
 
     private void SetLoading(bool isLoading)
@@ -44,13 +45,13 @@ public partial class Tela_Login : ContentPage
 
             if (!(dominio == "gmail.com" || dominio == "hotmail.com" || dominio == "outlook.com"))
             {
-                await DisplayAlert("Erro", "O domÌnio do e-mail deve ser gmail.com, hotmail.com ou outlook.com.", "OK");
+                await DisplayAlert("Erro", "O dom√≠nio do e-mail deve ser gmail.com, hotmail.com ou outlook.com.", "OK");
                 return;
             }
         }
         catch
         {
-            await DisplayAlert("Erro", "Por favor, insira um e-mail v·lido.", "OK");
+            await DisplayAlert("Erro", "Por favor, insira um e-mail v√°lido.", "OK");
             return;
         }
 
@@ -58,25 +59,28 @@ public partial class Tela_Login : ContentPage
 
         try
         {
-            var usuarioLogado = await repositorio.RealizarLoginAsync(email, senha);
+            var loginResponse = await _apiService.LoginAsync(email, senha);
 
-            if (usuarioLogado != null)
+            if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
             {
-                await DisplayAlert("Bem-vindo", $"Login efetuado com sucesso! Ol·, {usuarioLogado.Nome}.", "OK");
-                await Navigation.PushAsync(new PaginaInicial(usuarioLogado, repositorio.ApiService));
+                // Usa o objeto Usuario retornado pela API quando dispon√≠vel
+                var usuario = loginResponse.Usuario ?? new Usuario { Nome = string.Empty, Email = email };
+
+                await DisplayAlert("Bem-vindo", $"Login efetuado com sucesso! Ol√°, {usuario.Nome}.", "OK");
+                await Navigation.PushAsync(new PaginaInicial(usuario, _apiService));
             }
             else
             {
-                lblMensagemErro.Text = "E-mail ou senha inv·lidos.";
+                lblMensagemErro.Text = "E-mail ou senha inv√°lidos.";
                 lblMensagemErro.IsVisible = true;
-                await DisplayAlert("Erro de Login", "E-mail ou senha inv·lidos.", "OK");
+                await DisplayAlert("Erro de Login", "E-mail ou senha inv√°lidos.", "OK");
             }
         }
         catch (Exception ex)
         {
-            lblMensagemErro.Text = $"N„o foi possÌvel conectar ao servidor. Detalhe: {ex.Message}";
+            lblMensagemErro.Text = $"N√£o foi poss√≠vel conectar ao servidor. Detalhe: {ex.Message}";
             lblMensagemErro.IsVisible = true;
-            await DisplayAlert("Erro de ComunicaÁ„o", $"N„o foi possÌvel conectar ao servidor. Detalhe: {ex.Message}", "OK");
+            await DisplayAlert("Erro de Comunica√ß√£o", $"N√£o foi poss√≠vel conectar ao servidor.\n\nDetalhe: {ex.Message}\n\nVerifique se:\n1. A API est√° rodando (iniciar-app.bat)\n2. O MySQL est√° ativo\n3. O firewall n√£o est√° bloqueando", "OK");
         }
         finally
         {
